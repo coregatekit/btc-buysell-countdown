@@ -194,12 +194,18 @@
 	// ─── 3-D tilt action ─────────────────────────────────────────────────────────
 	function tilt(node: HTMLElement) {
 		let raf = 0;
+		let rect = node.getBoundingClientRect();
+
+		const onResize = () => { rect = node.getBoundingClientRect(); };
+		const observer = new ResizeObserver(onResize);
+		observer.observe(node);
+		window.addEventListener('scroll', onResize, { passive: true });
+
 		const onMove = (e: MouseEvent) => {
 			cancelAnimationFrame(raf);
 			raf = requestAnimationFrame(() => {
-				const { left, top, width, height } = node.getBoundingClientRect();
-				const x = ((e.clientX - left) / width  - 0.5) * 10;
-				const y = ((e.clientY - top)  / height - 0.5) * -10;
+				const x = ((e.clientX - rect.left) / rect.width  - 0.5) * 10;
+				const y = ((e.clientY - rect.top)  / rect.height - 0.5) * -10;
 				node.style.transform = `perspective(900px) rotateY(${x}deg) rotateX(${y}deg) translateZ(8px)`;
 				node.style.transition = 'transform 0.08s ease';
 			});
@@ -214,6 +220,8 @@
 		return {
 			destroy() {
 				cancelAnimationFrame(raf);
+				observer.disconnect();
+				window.removeEventListener('scroll', onResize);
 				node.removeEventListener('mousemove', onMove);
 				node.removeEventListener('mouseleave', onLeave);
 			}

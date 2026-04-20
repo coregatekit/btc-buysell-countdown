@@ -408,3 +408,33 @@ input[type="range"]::-moz-range-thumb {
   animation: ticker-scroll-reverse 36s linear infinite;
   white-space: nowrap;
 }
+
+/* ── Accessibility: respect prefers-reduced-motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .particle,
+  .scanline-sweep,
+  .blob-drift-1,
+  .blob-drift-2,
+  .ticker-item,
+  .ticker-item-reverse,
+  .orbit-ring,
+  .orbit-ring-outer,
+  .text-glitch,
+  .digit-flip,
+  .shimmer-bar::after {
+    animation: none !important;
+    transition: none !important;
+  }
+  /* Ensure card-enter elements remain visible */
+  .card-enter-1,
+  .card-enter-2,
+  .card-enter-3,
+  .card-enter-4,
+  .card-enter-5,
+  .card-enter-6,
+  .card-enter-7 {
+    animation: none !important;
+    opacity: 1 !important;
+    transform: none !important;
+  }
+}
