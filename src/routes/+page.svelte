@@ -989,10 +989,16 @@
 	</main>
 
 	<!-- ─── Footer ──────────────────────────────────────────────────────── -->
-	<footer class="border-t border-gray-800/50 py-6 text-center">
+	<footer class="border-t border-gray-800/50 py-8 text-center">
 		<p class="text-gray-600 text-xs">
 			Built with ❤️ for diamond hands · 
 			<span class="text-bitcoin-orange">₿TC Halving Signals</span>
+		</p>
+		<p class="text-gray-600 text-xs">
+			 Vibe by 
+			<span class="text-bitcoin-orange">
+				<a target="_blank" href="https://github.com/coregatekit">coregate</a>
+			</span>
 		</p>
 	</footer>
 </div>
