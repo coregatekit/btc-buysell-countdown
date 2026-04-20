@@ -3,7 +3,7 @@ name: Build and Push Docker Image
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 env:
   REGISTRY: ghcr.io
@@ -58,31 +58,33 @@ jobs:
             -d '{"visibility":"private"}' \
             "https://api.github.com/orgs/${OWNER}/packages/container/${PACKAGE_NAME}"
 
-  update-gitops:
-    name: Update GitOps Repository
-    runs-on: ubuntu-latest
+  deploy:
     needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
 
     steps:
-      - name: Checkout GitOps repository
-        uses: actions/checkout@v4
+      - name: Checkout GitOps Repo
+        uses: actions/checkout@v5
         with:
           repository: coregatekit/gitops
           token: ${{ secrets.GITOPS_TOKEN }}
           path: gitops
 
-      - name: Update image tag in GitOps repository
+      - name: Update image tag in production
         run: |
-          TAG=${GITHUB_REF_NAME}
-          IMAGE="$REGISTRY/$IMAGE_NAME"
-          cd gitops
-          kustomize edit set image ${IMAGE}:${TAG}
+          cd gitops/apps/btc-halving-signal/overlays/prod
+          sed -i "s/newTag: .*/newTag: \"${{ needs.build.outputs.tag }}\"/" kustomization.yaml
 
-      - name: Commit and push changes
+      - name: Commit and Push changes
         run: |
           cd gitops
-          git config user.name "github-actions[bot]"
-          git config user.email "github-actions[bot]@users.noreply.github.com"
-          git add .
-          git commit -m "chore: update image tag to ${GITHUB_REF_NAME}"
-          git push
+          git config user.name "github-actions"
+          git config user.email "actions@github.com"
+
+          git add apps/btc-halving-signal/overlays/prod/kustomization.yaml
+          git commit -m "Update image tag to ${{ needs.build.outputs.tag }} for production" || echo "No changes"
+
+          git push origin main
