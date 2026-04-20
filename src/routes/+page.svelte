@@ -173,6 +173,10 @@
 		return n.toLocaleString('en-US');
 	}
 
+	function formatPrice(n: number) {
+		return n.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+	}
+
 	// Timeline progress (0-100)
 	let timelineProgress = $derived(
 		(() => {
@@ -368,7 +372,7 @@
 								<span class="text-2xl font-black font-mono text-neon-cyan animate-pulse">Loading…</span>
 							{:else if btcPrice !== null}
 								<span class="text-3xl font-black font-mono text-neon-cyan">
-									${btcPrice.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+									${formatPrice(btcPrice)}
 								</span>
 							{:else}
 								<span class="text-gray-500 text-sm">—</span>
